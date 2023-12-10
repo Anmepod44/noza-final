@@ -12,11 +12,11 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 
-const mapName = "EtaDeliveryMap"; // HERE GOES THE NAME OF YOUR MAP
-const indexName = "EtaDeliveryPlaceIndex" // HERE GOES THE NAME OF YOUR PLACE INDEX
-const trackerName = "DropThePackageTracker" // HERE GOES THE NAME OF  YOUR TRACKER
-const deviceID = "eta-device" // HERE GOES THE NAME OF YOUR DEVICE
-const routeCalculator = "MyDropPackageEtaCalculator"; // HERE GOES THE NAME OF YOUR ROUTE CALCULATOR
+const mapName = "third_map"; // HERE GOES THE NAME OF YOUR MAP
+const indexName = "casmir-amplify-index" // HERE GOES THE NAME OF YOUR PLACE INDEX
+const trackerName = "amplify-tracker" // HERE GOES THE NAME OF  YOUR TRACKER
+const deviceID = " aws school bus" // HERE GOES THE NAME OF YOUR DEVICE
+const routeCalculator = "amplify-calculator"; // HERE GOES THE NAME OF YOUR ROUTE CALCULATOR
 
 Amplify.configure(awsconfig);
 let AWS = require('aws-sdk');
@@ -50,7 +50,7 @@ function Header(props) {
     <div className="container">
       <div className="row">
         <div className="col-10">
-          <h2>PACKAGE DELIVERY APPLICATION</h2>
+          <h2>CASMIR BUS TRACKER APPLICATION</h2>
         </div>
         <div className="col-2">
           <AmplifySignOut />
@@ -62,7 +62,7 @@ function Header(props) {
 
 function Search(props) {
 
-  const [place, setPlace] = useState('Helsinki');
+  const [place, setPlace] = useState('Nairobi');
 
   const handleChange = (event) => {
     setPlace(event.target.value);
@@ -236,7 +236,7 @@ const App = () => {
           // Create publish parameters
           var params = {
             Message: 'ETA is 5 mins',
-            TopicArn: process.env.REACT_APP_SNS_TOPIC_ARN
+            TopicArn: "arn:aws:sns:eu-north-1:622811571324:eventbridge-lambda:40203b56-b700-4665-9885-858104e3e298"
           };
           
           // Create promise and SNS service object
@@ -276,7 +276,7 @@ const App = () => {
         <div>
           {eta
             ? <div>
-              <h5>My Package Delivery ETA is: {eta} mins</h5>
+              <h5>AWS BUS ARRIVAL TIME IS IN : {eta} mins</h5>
             </div>
             : <div></div>
           }

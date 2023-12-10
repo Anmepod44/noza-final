@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-locationnoza-dev-30731-authRole",
+      "UnauthRoleArn": "arn:aws:iam::622811571324:role/amplify-locationnoza-dev-30731-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::622811571324:role/amplify-locationnoza-dev-30731-authRole",
+      "Region": "eu-north-1",
+      "DeploymentBucketName": "amplify-locationnoza-dev-30731-deployment",
+      "UnauthRoleName": "amplify-locationnoza-dev-30731-unauthRole",
+      "StackName": "amplify-locationnoza-dev-30731",
+      "StackId": "arn:aws:cloudformation:eu-north-1:622811571324:stack/amplify-locationnoza-dev-30731/1f9c2bb0-96f0-11ee-b60e-06a96fbb9da0",
+      "AmplifyAppId": "d3v6tds12rwxls"
+    },
+    "categories": {
+      "auth": {
+        "locationnoza6909b733": {}
+      }
+    }
+  }
+}
