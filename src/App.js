@@ -37,7 +37,7 @@ const transformRequest = (credentials) => (url, resourceType) => {
   if (url?.includes("amazonaws.com")) {
     return {
       url: Signer.signUrl(url, {
-        access_key: AKIAZCATWMR6LQKNJWZW,
+        access_key: "AKIAZCATWMR6LQKNJWZW",
         secret_key: "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"
       })
     };
