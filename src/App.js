@@ -12,11 +12,14 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 
-const mapName = "third_map"; // HERE GOES THE NAME OF YOUR MAP
+
 const indexName = "casmir-amplify-index" // HERE GOES THE NAME OF YOUR PLACE INDEX
 const trackerName = "amplify-tracker" // HERE GOES THE NAME OF  YOUR TRACKER
 const deviceID = "eta_device124" // HERE GOES THE NAME OF YOUR DEVICE
 const routeCalculator = "amplify-calculator"; // HERE GOES THE NAME OF YOUR ROUTE CALCULATOR
+const apiKey = "v1.public.eyJqdGkiOiI0MTZmYzlhMS05YmY0LTRmYzEtYWRlMC0wMWNlY2RhZjg4MTcifakHsh0Mnk0mKXzNusJbUH5t5pX83mqJ1S4YTougMnsQDeXPuNAWNy58AonNzuyvANdFEf5pQxqMC4POHVAakGEDUrcOjfS6l6GLccIhNtOA5_dDwKmWGdvZUWc-zWehMkH-RAMskdtY2Rqel4r0rlfiAlzlSc1ccr365DOwXNgN9JrpZgRHXy1tX5oMly4RPQ3ffcDq8CbkcUHFl-jqhsxtL2i03LLf_ZDd5qJ7XtrLdNPSYZEwp-8wcKGQJ3PJWZW63Gy80Cqok8pK-plmrL88WMsojgHG2pADgMdqnLtVLnLLwDfDDF9xiutyz1jycZ_1_pR_4669DhuHWSRraPE.N2IyNTQ2ODQtOWE1YS00MmI2LTkyOTItMGJlNGMxODU1Mzc2";
+const mapName = "third_map";
+const region = "eu-north-1";
 
 Amplify.configure(awsconfig);
 let AWS = require('aws-sdk');
@@ -27,7 +30,7 @@ let AWS = require('aws-sdk');
 const transformRequest = (credentials) => (url, resourceType) => {
   // Resolve to an AWS URL
   if (resourceType === "Style" && !url?.includes("://")) {
-    url = `https://maps.geo.us-west-2.amazonaws.com/maps/v0/maps/${url}/style-descriptor`;
+    url = `https://maps.geo.${region}.amazonaws.com/maps/v0/maps/${mapName}/style-descriptor?key=${apiKey}`;
   }
 
   // Only sign AWS requests (with the signature as part of the query string)
