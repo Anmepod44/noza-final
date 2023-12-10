@@ -1,6 +1,7 @@
 #!/bin/bash
-TRACKER_NAME=DropThePackageTracker
-DEVICE_ID=eta-device
+TRACKER_NAME=amplify-tracker
+DEVICE_ID=eta_device123
+
 ​
 function update_position()
 	{
