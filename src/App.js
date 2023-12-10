@@ -15,7 +15,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 const mapName = "third_map"; // HERE GOES THE NAME OF YOUR MAP
 const indexName = "casmir-amplify-index" // HERE GOES THE NAME OF YOUR PLACE INDEX
 const trackerName = "amplify-tracker" // HERE GOES THE NAME OF  YOUR TRACKER
-const deviceID = " aws school bus" // HERE GOES THE NAME OF YOUR DEVICE
+const deviceID = "eta_device124" // HERE GOES THE NAME OF YOUR DEVICE
 const routeCalculator = "amplify-calculator"; // HERE GOES THE NAME OF YOUR ROUTE CALCULATOR
 
 Amplify.configure(awsconfig);
@@ -235,7 +235,7 @@ const App = () => {
 
           // Create publish parameters
           var params = {
-            Message: 'ETA is 5 mins',
+            Message: 'Estimated Arrival time  is 5 mins',
             TopicArn: "arn:aws:sns:eu-north-1:622811571324:eventbridge-lambda:40203b56-b700-4665-9885-858104e3e298"
           };
           
@@ -291,7 +291,7 @@ const App = () => {
               height="100vh"
               transformRequest={transformRequest(credentials)}
               mapStyle={mapName}
-              onViewportChange={setViewport} w
+              onViewportChange={setViewport} 
             >
               <Marker
                 longitude={marker.longitude}
