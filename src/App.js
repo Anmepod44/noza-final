@@ -1,323 +1,323 @@
-// import React, { useState, useEffect } from 'react';
-// import Amplify, { Auth } from 'aws-amplify';
-// import { AmplifyAuthenticator, AmplifySignOut } from '@aws-amplify/ui-react';
-// import { Signer } from "@aws-amplify/core";
-// import Location from "aws-sdk/clients/location";
-// import Pin from './Pin'
-// import useInterval from './useInterval'
-// import ReactMapGL, { Marker, NavigationControl } from "react-map-gl";
-// import awsconfig from './aws-exports';
-// import "mapbox-gl/dist/mapbox-gl.css";
-// import './App.css';
-// import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { useState, useEffect } from 'react';
+import Amplify, { Auth } from 'aws-amplify';
+import { AmplifyAuthenticator, AmplifySignOut } from '@aws-amplify/ui-react';
+import { Signer } from "@aws-amplify/core";
+import Location from "aws-sdk/clients/location";
+import Pin from './Pin'
+import useInterval from './useInterval'
+import ReactMapGL, { Marker, NavigationControl } from "react-map-gl";
+import awsconfig from './aws-exports';
+import "mapbox-gl/dist/mapbox-gl.css";
+import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 
-// const mapName = "third_map"; // HERE GOES THE NAME OF YOUR MAP
-// const indexName = "casmir-amplify-index" // HERE GOES THE NAME OF YOUR PLACE INDEX
-// const trackerName = "amplify-tracker" // HERE GOES THE NAME OF  YOUR TRACKER
-// const deviceID = " aws school bus" // HERE GOES THE NAME OF YOUR DEVICE
-// const routeCalculator = "amplify-calculator"; // HERE GOES THE NAME OF YOUR ROUTE CALCULATOR
+const mapName = "third_map"; // HERE GOES THE NAME OF YOUR MAP
+const indexName = "casmir-amplify-index" // HERE GOES THE NAME OF YOUR PLACE INDEX
+const trackerName = "amplify-tracker" // HERE GOES THE NAME OF  YOUR TRACKER
+const deviceID = " aws school bus" // HERE GOES THE NAME OF YOUR DEVICE
+const routeCalculator = "amplify-calculator"; // HERE GOES THE NAME OF YOUR ROUTE CALCULATOR
 
-// Amplify.configure(awsconfig);
-// let AWS = require('aws-sdk');
+Amplify.configure(awsconfig);
+let AWS = require('aws-sdk');
 
-// /**
-//  * Sign requests made by Mapbox GL using AWS SigV4.
-//  */
-// const transformRequest = (credentials) => (url, resourceType) => {
-//   // Resolve to an AWS URL
-//   if (resourceType === "Style" && !url?.includes("://")) {
-//     url = `https://maps.geo.us-west-2.amazonaws.com/maps/v0/maps/${url}/style-descriptor`;
-//   }
+/**
+ * Sign requests made by Mapbox GL using AWS SigV4.
+ */
+const transformRequest = (credentials) => (url, resourceType) => {
+  // Resolve to an AWS URL
+  if (resourceType === "Style" && !url?.includes("://")) {
+    url = `https://maps.geo.us-west-2.amazonaws.com/maps/v0/maps/${url}/style-descriptor`;
+  }
 
-//   // Only sign AWS requests (with the signature as part of the query string)
-//   if (url?.includes("amazonaws.com")) {
-//     return {
-//       url: Signer.signUrl(url, {
-//         access_key: credentials.accessKeyId,
-//         secret_key: credentials.secretAccessKey,
-//         session_token: credentials.sessionToken,
-//       })
-//     };
-//   }
+  // Only sign AWS requests (with the signature as part of the query string)
+  if (url?.includes("amazonaws.com")) {
+    return {
+      url: Signer.signUrl(url, {
+        access_key: credentials.accessKeyId,
+        secret_key: credentials.secretAccessKey,
+        session_token: credentials.sessionToken,
+      })
+    };
+  }
 
-//   // Don't sign
-//   return { url: url || "" };
-// };
+  // Don't sign
+  return { url: url || "" };
+};
 
-// function Header(props) {
-//   return (
-//     <div className="container">
-//       <div className="row">
-//         <div className="col-10">
-//           <h2>CASMIR BUS TRACKER APPLICATION</h2>
-//         </div>
-//         <div className="col-2">
-//           <AmplifySignOut />
-//         </div>
-//       </div>
-//     </div>
-//   )
-// };
+function Header(props) {
+  return (
+    <div className="container">
+      <div className="row">
+        <div className="col-10">
+          <h2>CASMIR BUS TRACKER APPLICATION</h2>
+        </div>
+        <div className="col-2">
+          <AmplifySignOut />
+        </div>
+      </div>
+    </div>
+  )
+};
 
-// function Search(props) {
+function Search(props) {
 
-//   const [place, setPlace] = useState('Nairobi');
+  const [place, setPlace] = useState('Nairobi');
 
-//   const handleChange = (event) => {
-//     setPlace(event.target.value);
-//   }
+  const handleChange = (event) => {
+    setPlace(event.target.value);
+  }
 
-//   const handleClick = (event) => {
-//     event.preventDefault();
-//     props.searchPlace(place)
-//   }
+  const handleClick = (event) => {
+    event.preventDefault();
+    props.searchPlace(place)
+  }
 
-//   return (
-//     <div className="container">
-//       <div className="input-group">
-//         <input type="text" className="form-control form-control-lg" placeholder="Search for Places" aria-label="Place" aria-describedby="basic-addon2" value={place} onChange={handleChange} />
-//         <div className="input-group-append">
-//           <button onClick={handleClick} className="btn btn-primary" type="submit">Search</button>
-//         </div>
-//       </div>
-//     </div>
-//   )
-// };
-
-
-// function Track(props) {
-
-//   const handleClick = (event) => {
-//     event.preventDefault();
-//     props.trackDevice()
-//   }
-//   return (
-//     <div className="container">
-//       <div className="input-group">
-//         <div className="input-group-append">
-//           <button onClick={handleClick} className="btn btn-primary" type="submit">Track</button>
-//         </div>
-//       </div>
-//     </div>
-//   )
-// }
-
-// const App = () => {
-//   let trackingLongitude;
-//   let trackingLatitude;
-//   const [credentials, setCredentials] = useState(null);
-
-//   const [viewport, setViewport] = useState({
-//     longitude: -123.1187,
-//     latitude: 49.2819,
-//     zoom: 10,
-//   });
-
-//   const [client, setClient] = useState(null);
-
-//   const [eta, setEta] = useState(null);
-
-//   const [marker, setMarker] = useState({
-//     longitude: -123.1187,
-//     latitude: 49.2819,
-//   });
-
-//   const [devPosMarkers, setDevPosMarkers] = useState([]);
-
-//   useEffect(() => {
-//     const fetchCredentials = async () => {
-//       setCredentials(await Auth.currentUserCredentials());
-//     };
-
-//     fetchCredentials();
-
-//     const createClient = async () => {
-//       const credentials = await Auth.currentCredentials();
-//       const client = new Location({
-//         credentials,
-//         region: awsconfig.aws_project_region,
-//       });
-//       setClient(client);
-//     }
-
-//     createClient();
-//   }, []);
-
-//   useInterval(() => {
-//     getDevicePosition();
-//   }, 30000);
-
-//   const searchPlace = (place) => {
-
-//     const params = {
-//       IndexName: indexName,
-//       Text: place,
-//     };
-
-//     client.searchPlaceIndexForText(params, (err, data) => {
-//       if (err) console.error(err);
-//       if (data) {
-
-//         const coordinates = data.Results[0].Place.Geometry.Point;
-//         setViewport({
-//           longitude: coordinates[0],
-//           latitude: coordinates[1],
-//           zoom: 10
-//         });
-
-//         setMarker({
-//           longitude: coordinates[0],
-//           latitude: coordinates[1],
-//         })
-//         return coordinates;
-//       }
-//     });
-//   }
+  return (
+    <div className="container">
+      <div className="input-group">
+        <input type="text" className="form-control form-control-lg" placeholder="Search for Places" aria-label="Place" aria-describedby="basic-addon2" value={place} onChange={handleChange} />
+        <div className="input-group-append">
+          <button onClick={handleClick} className="btn btn-primary" type="submit">Search</button>
+        </div>
+      </div>
+    </div>
+  )
+};
 
 
-//   const getDevicePosition = () => {
+function Track(props) {
 
-//     setDevPosMarkers([]);
-//     let params = {
-//       DeviceId: deviceID,
-//       TrackerName: trackerName,
-//       StartTimeInclusive: "2021-02-02T19:05:07.327Z",
-//       EndTimeExclusive: new Date()
-//     };
+  const handleClick = (event) => {
+    event.preventDefault();
+    props.trackDevice()
+  }
+  return (
+    <div className="container">
+      <div className="input-group">
+        <div className="input-group-append">
+          <button onClick={handleClick} className="btn btn-primary" type="submit">Track</button>
+        </div>
+      </div>
+    </div>
+  )
+}
 
-//     client.getDevicePositionHistory(params, (err, data) => {
-//       if (err) console.log(err, err.stack);
-//       if (data) {
-//         const tempPosMarkers = data.DevicePositions.map(function (devPos, index) {
+const App = () => {
+  let trackingLongitude;
+  let trackingLatitude;
+  const [credentials, setCredentials] = useState(null);
 
-//           return {
-//             index: index,
-//             long: devPos.Position[0],
-//             lat: devPos.Position[1]
-//           }
-//         });
+  const [viewport, setViewport] = useState({
+    longitude: -123.1187,
+    latitude: 49.2819,
+    zoom: 10,
+  });
 
-//         setDevPosMarkers(tempPosMarkers);
-//         const pos = tempPosMarkers.length - 1;
+  const [client, setClient] = useState(null);
 
-//         setViewport({
-//           longitude: tempPosMarkers[pos].long,
-//           latitude: tempPosMarkers[pos].lat,
-//           zoom: 12
-//         });
+  const [eta, setEta] = useState(null);
 
-//         trackingLongitude = tempPosMarkers[pos].long;
-//         trackingLatitude = tempPosMarkers[pos].lat;
-//         myRouteCalculator(trackingLongitude, trackingLatitude);
-//       }
-//     });
-//   }
+  const [marker, setMarker] = useState({
+    longitude: -123.1187,
+    latitude: 49.2819,
+  });
 
-//   const myRouteCalculator = (long, lat) => {
+  const [devPosMarkers, setDevPosMarkers] = useState([]);
 
-//     let parameter = {
-//       CalculatorName: routeCalculator,
-//       DeparturePosition: [long, lat],
-//       DestinationPosition: [-74.03330326080321, 40.741859668270294]
-//     };
+  useEffect(() => {
+    const fetchCredentials = async () => {
+      setCredentials(await Auth.currentUserCredentials());
+    };
 
-//     client.calculateRoute(parameter, (err, data) => {
+    fetchCredentials();
 
-//       if (err) console.log(err);
-//       if (data) {
-//         const deliveryETA = data.Legs[0].DurationSeconds;
+    const createClient = async () => {
+      const credentials = await Auth.currentCredentials();
+      const client = new Location({
+        credentials,
+        region: awsconfig.aws_project_region,
+      });
+      setClient(client);
+    }
 
-//         const etaInMins = Math.round(deliveryETA / 60);
-//         setEta(etaInMins);
+    createClient();
+  }, []);
 
-//         if (deliveryETA < 300 && deliveryETA > 100) {
+  useInterval(() => {
+    getDevicePosition();
+  }, 30000);
 
-//           // Create publish parameters
-//           var params = {
-//             Message: 'ETA is 5 mins',
-//             TopicArn: "arn:aws:sns:eu-north-1:622811571324:eventbridge-lambda:40203b56-b700-4665-9885-858104e3e298"
-//           };
+  const searchPlace = (place) => {
+
+    const params = {
+      IndexName: indexName,
+      Text: place,
+    };
+
+    client.searchPlaceIndexForText(params, (err, data) => {
+      if (err) console.error(err);
+      if (data) {
+
+        const coordinates = data.Results[0].Place.Geometry.Point;
+        setViewport({
+          longitude: coordinates[0],
+          latitude: coordinates[1],
+          zoom: 10
+        });
+
+        setMarker({
+          longitude: coordinates[0],
+          latitude: coordinates[1],
+        })
+        return coordinates;
+      }
+    });
+  }
+
+
+  const getDevicePosition = () => {
+
+    setDevPosMarkers([]);
+    let params = {
+      DeviceId: deviceID,
+      TrackerName: trackerName,
+      StartTimeInclusive: "2021-02-02T19:05:07.327Z",
+      EndTimeExclusive: new Date()
+    };
+
+    client.getDevicePositionHistory(params, (err, data) => {
+      if (err) console.log(err, err.stack);
+      if (data) {
+        const tempPosMarkers = data.DevicePositions.map(function (devPos, index) {
+
+          return {
+            index: index,
+            long: devPos.Position[0],
+            lat: devPos.Position[1]
+          }
+        });
+
+        setDevPosMarkers(tempPosMarkers);
+        const pos = tempPosMarkers.length - 1;
+
+        setViewport({
+          longitude: tempPosMarkers[pos].long,
+          latitude: tempPosMarkers[pos].lat,
+          zoom: 12
+        });
+
+        trackingLongitude = tempPosMarkers[pos].long;
+        trackingLatitude = tempPosMarkers[pos].lat;
+        myRouteCalculator(trackingLongitude, trackingLatitude);
+      }
+    });
+  }
+
+  const myRouteCalculator = (long, lat) => {
+
+    let parameter = {
+      CalculatorName: routeCalculator,
+      DeparturePosition: [long, lat],
+      DestinationPosition: [-74.03330326080321, 40.741859668270294]
+    };
+
+    client.calculateRoute(parameter, (err, data) => {
+
+      if (err) console.log(err);
+      if (data) {
+        const deliveryETA = data.Legs[0].DurationSeconds;
+
+        const etaInMins = Math.round(deliveryETA / 60);
+        setEta(etaInMins);
+
+        if (deliveryETA < 300 && deliveryETA > 100) {
+
+          // Create publish parameters
+          var params = {
+            Message: 'ETA is 5 mins',
+            TopicArn: "arn:aws:sns:eu-north-1:622811571324:eventbridge-lambda:40203b56-b700-4665-9885-858104e3e298"
+          };
           
-//           // Create promise and SNS service object
-//           var publishTextPromise = new AWS.SNS({credentials}).publish(params).promise();
+          // Create promise and SNS service object
+          var publishTextPromise = new AWS.SNS({credentials}).publish(params).promise();
           
-//           // Handle promise's fulfilled/rejected states
-//           publishTextPromise.then(
-//             function(data) {
-//               console.log(`Message ${params.Message} sent to the topic ${params.TopicArn}`);
-//               console.log("MessageID is " + data.MessageId);
-//             }).catch(
-//               function(err) {
-//               console.error(err, err.stack);
-//             });
-//         }
-//       }
-//     });
-//   }
+          // Handle promise's fulfilled/rejected states
+          publishTextPromise.then(
+            function(data) {
+              console.log(`Message ${params.Message} sent to the topic ${params.TopicArn}`);
+              console.log("MessageID is " + data.MessageId);
+            }).catch(
+              function(err) {
+              console.error(err, err.stack);
+            });
+        }
+      }
+    });
+  }
 
-//   const trackerMarkers = React.useMemo(() => devPosMarkers.map(
-//     pos => (
-//       <Marker key={pos.index} longitude={pos.long} latitude={pos.lat} >
-//         <Pin text={pos.index + 1} size={20} />
-//       </Marker>
-//     )), [devPosMarkers]);
+  const trackerMarkers = React.useMemo(() => devPosMarkers.map(
+    pos => (
+      <Marker key={pos.index} longitude={pos.long} latitude={pos.lat} >
+        <Pin text={pos.index + 1} size={20} />
+      </Marker>
+    )), [devPosMarkers]);
 
 
-//   return (
-//     <AmplifyAuthenticator>
-//       <div className="App">
-//         <Header />
-//         <br />
-//         <div>
-//           <Search searchPlace={searchPlace} />
-//         </div>
-//         <br />
-//         <div>
-//           {eta
-//             ? <div>
-//               <h5>AWS BUS ARRIVAL TIME IS IN : {eta} mins</h5>
-//             </div>
-//             : <div></div>
-//           }
-//           <Track trackDevice={getDevicePosition} />
-//         </div>
-//         <br />
-//         <div>
-//           {credentials ? (
-//             <ReactMapGL
-//               {...viewport}
-//               width="100%"
-//               height="100vh"
-//               transformRequest={transformRequest(credentials)}
-//               mapStyle={mapName}
-//               onViewportChange={setViewport} w
-//             >
-//               <Marker
-//                 longitude={marker.longitude}
-//                 latitude={marker.latitude}
-//                 offsetTop={-20}
-//                 offsetLeft={-10}
-//               >
-//                 <Pin size={20} />
-//               </Marker>
+  return (
+    <AmplifyAuthenticator>
+      <div className="App">
+        <Header />
+        <br />
+        <div>
+          <Search searchPlace={searchPlace} />
+        </div>
+        <br />
+        <div>
+          {eta
+            ? <div>
+              <h5>AWS BUS ARRIVAL TIME IS IN : {eta} mins</h5>
+            </div>
+            : <div></div>
+          }
+          <Track trackDevice={getDevicePosition} />
+        </div>
+        <br />
+        <div>
+          {credentials ? (
+            <ReactMapGL
+              {...viewport}
+              width="100%"
+              height="100vh"
+              transformRequest={transformRequest(credentials)}
+              mapStyle={mapName}
+              onViewportChange={setViewport} w
+            >
+              <Marker
+                longitude={marker.longitude}
+                latitude={marker.latitude}
+                offsetTop={-20}
+                offsetLeft={-10}
+              >
+                <Pin size={20} />
+              </Marker>
 
-//               {trackerMarkers}
+              {trackerMarkers}
 
-//               <div style={{ position: "absolute", left: 20, top: 20 }}>
-//                 <NavigationControl showCompass={false} />
-//               </div>
+              <div style={{ position: "absolute", left: 20, top: 20 }}>
+                <NavigationControl showCompass={false} />
+              </div>
 
-//             </ReactMapGL>
-//           ) : (
-//             <h1>Loading...</h1>
-//           )}
-//         </div>
-//       </div>
-//     </AmplifyAuthenticator>
-//   );
-// }
+            </ReactMapGL>
+          ) : (
+            <h1>Loading...</h1>
+          )}
+        </div>
+      </div>
+    </AmplifyAuthenticator>
+  );
+}
 
-// export default App;
+export default App;
 
 
